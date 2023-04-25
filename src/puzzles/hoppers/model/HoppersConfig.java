@@ -93,19 +93,17 @@ public class HoppersConfig implements Configuration{
 
     /**
      * Sets new cell contents, moving contents to their new given place.
-     * @param r the desired row
-     * @param c the desired column
+     * @param startRow start row
+     * @param startCol start column
+     * @param endRow end row
+     * @param endCol end column
      */
-    public void move(int r, int c){
-        if((r%2 != 0) && (c%2 != 0)){
-            grid[r][c] = grid[r-1][c-1];
-            grid[r-1][c-1] = '.';
-            grid[r-2][c-2] = '.';
-        } else {
-            grid[r][c] = grid[r-4][c-4];
-            grid[r-2][c-2] = '.';
-            grid[r-4][c-4] = '.';
-        }
+    public void move(int startRow, int startCol, int endRow, int endCol){
+        int midRow = (startRow+endRow)/2;
+        int midCol = (startCol+endCol)/2;
+        grid[endRow][endCol] = grid[startRow][startCol];
+        grid[midRow][midCol] = '.';
+        grid[startRow][startCol] = '.';
     }
 
     /**

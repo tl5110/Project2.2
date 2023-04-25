@@ -9,6 +9,8 @@ import puzzles.hoppers.model.HoppersModel;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class HoppersGUI extends Application implements Observer<HoppersModel, String> {
     /** The size of all icons, in square dimension */
     private final static int ICON_SIZE = 75;
@@ -19,8 +21,14 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
     private final static String RESOURCES_DIR = "resources/";
 
     // for demonstration purposes
-    private Image redFrog = new Image(getClass().getResourceAsStream(RESOURCES_DIR+"red_frog.png"));
-
+    private final Image redFrog = new Image(Objects.requireNonNull
+            (getClass().getResourceAsStream(RESOURCES_DIR + "red_frog.png")));
+    private final Image greenFrog = new Image(Objects.requireNonNull
+            (getClass().getResourceAsStream(RESOURCES_DIR + "green_frog.png")));
+    private final Image lilyPad = new Image(Objects.requireNonNull
+            (getClass().getResourceAsStream(RESOURCES_DIR + "lily_pad.png")));
+    private final Image water = new Image(Objects.requireNonNull
+            (getClass().getResourceAsStream(RESOURCES_DIR + "water.png")));
     private Stage stage;
 
     public void init() {
