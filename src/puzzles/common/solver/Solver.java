@@ -70,7 +70,7 @@ public class Solver{
      */
     public Collection<Configuration> constructPath(HashMap<Configuration, Configuration> predecessors,
                                                    Configuration end){
-        List<Configuration> path = new LinkedList<>();
+        List<Configuration> path = new ArrayList<>();
         if(predecessors.containsKey(end)) {
             while(end != start){
                 path.add(0, end);
