@@ -62,12 +62,12 @@ public class HoppersModel {
      * @throws IOException if the file is not found or there are errors reading
      */
     public void load(String filename) throws IOException {
-        // How to do this without FileReader
-        try(FileReader file = new FileReader("data/hoppers/"+filename)){
-            currentConfig = new HoppersConfig("data/hoppers/"+filename);
-            alertObservers("Loaded: " + filename);
+        String[] file = filename.split("/");
+        try(FileReader check = new FileReader(filename)){
+            currentConfig = new HoppersConfig(filename);
+            alertObservers("Loaded: " + file[2]);
         } catch (FileNotFoundException e){
-            alertObservers("Failed to load: " + filename);
+            alertObservers("Failed to load: " + file[2]);
         }
     }
 
@@ -79,6 +79,7 @@ public class HoppersModel {
      * @throws IOException if the file is not found or there are errors reading
      */
     public void reset(String filename) throws IOException {
+        load(filename);
         currentConfig = new HoppersConfig(filename);
         alertObservers("Puzzle reset!");
     }
@@ -129,13 +130,15 @@ public class HoppersModel {
      * @param c the column
      */
     public void firstSelect(int r, int c){
-        if(currentConfig.getCell(r, c) == 'G' || currentConfig.getCell(r, c) == 'R'){
-            startRow = r;
-            startCol = c;
-            isFirstSelect = false;
-            alertObservers("Selected (" + r + ", " + c + ")");
+        if((r >= 0 && r < currentConfig.getRows()) && (c >= 0 && c < currentConfig.getCols())){
+            if(currentConfig.getCell(r, c) == 'G' || currentConfig.getCell(r, c) == 'R'){
+                startRow = r;
+                startCol = c;
+                isFirstSelect = false;
+                alertObservers("Selected (" + r + ", " + c + ")");
+            }
         } else {
-            alertObservers("No frog");
+            alertObservers("No frog at (" + r + ", " + c + ")");
         }
     }
 
@@ -184,10 +187,13 @@ public class HoppersModel {
     @Override
     public String toString(){
         StringBuilder gridString = new StringBuilder();
-        gridString.append("""
-                   0 1 2 3 4
-                  ----------
-                """);
+        gridString.append("   ");
+        for(int c = 0; c < currentConfig.getCols(); c++){
+            gridString.append(c).append(" ");
+        }
+        gridString.append("\n  ");
+        gridString.append("-".repeat(Math.max(0, 2 * currentConfig.getCols())));
+        gridString.append("\n");
         for(int r = 0; r < currentConfig.getRows(); r++){
             gridString.append(r).append("| ");
             for(int c = 0; c < currentConfig.getCols(); c++){

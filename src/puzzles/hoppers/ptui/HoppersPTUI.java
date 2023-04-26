@@ -26,8 +26,10 @@ public class HoppersPTUI implements Observer<HoppersModel, String> {
     public void init(String filename) throws IOException {
         this.model = new HoppersModel(filename);
         this.model.addObserver(this);
+        String[] file = filename.split("/");
+        System.out.println("Loaded: " + file[2]);
+        System.out.println(model);
         displayHelp();
-        // How to display initial load
     }
 
     /**
@@ -42,7 +44,6 @@ public class HoppersPTUI implements Observer<HoppersModel, String> {
      */
     @Override
     public void update(HoppersModel model, String data) {
-        // for demonstration purposes
         System.out.println(data);
         System.out.println(model);
     }
@@ -74,9 +75,14 @@ public class HoppersPTUI implements Observer<HoppersModel, String> {
                 if (words[0].startsWith("h")) {
                     model.hint();
                 } else if(words[0].startsWith("l")){
-                    model.load(words[1]);
-                    // How to store new file names so that when reset it
-                    // resets it to that file instead of the default one
+                    String[] filename = words[1].split("/");
+                    if(filename.length > 1){
+                        ogBoard = words[1];
+                        model.load(ogBoard);
+                    } else{
+                        ogBoard = "data/hoppers/" + words[1];
+                        model.load(ogBoard);
+                    }
                 } else if(words[0].startsWith("s")){
                     int row = Integer.parseInt(words[1]);
                     int col = Integer.parseInt(words[2]);
