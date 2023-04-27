@@ -51,7 +51,7 @@ public class Hoppers {
                         step += 1;
                     }
                 } else {
-                    System.out.println("No solution!");
+                    System.out.println("No solution");
                 }
             } catch(IOException ioe){
                 System.out.println(ioe.getMessage());

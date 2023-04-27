@@ -123,7 +123,7 @@ public class HoppersModel {
             currentConfig = (HoppersConfig) hints.get(1);
             alertObservers("Next step!");
         } else {
-            alertObservers("No Solution!");
+            alertObservers("No Solution");
         }
     }
 
