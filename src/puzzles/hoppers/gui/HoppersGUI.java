@@ -1,5 +1,4 @@
 package puzzles.hoppers.gui;
-
 import puzzles.common.Observer;
 import puzzles.hoppers.model.*;
 import java.nio.file.*;

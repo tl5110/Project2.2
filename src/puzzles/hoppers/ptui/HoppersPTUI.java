@@ -1,5 +1,4 @@
 package puzzles.hoppers.ptui;
-
 import puzzles.common.Observer;
 import puzzles.hoppers.model.HoppersModel;
 import java.io.IOException;

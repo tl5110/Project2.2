@@ -1,5 +1,4 @@
 package puzzles.hoppers.model;
-
 import puzzles.common.solver.Configuration;
 import java.util.*;
 import java.io.*;

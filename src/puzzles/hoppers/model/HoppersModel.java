@@ -1,5 +1,4 @@
 package puzzles.hoppers.model;
-
 import puzzles.common.solver.Configuration;
 import puzzles.common.solver.Solver;
 import puzzles.common.Observer;
@@ -11,7 +10,6 @@ import java.io.*;
  *
  * @author Tiffany Lee
  */
-
 public class HoppersModel {
     /** the collection of observers of this model */
     private final List<Observer<HoppersModel, String>> observers = new LinkedList<>();
