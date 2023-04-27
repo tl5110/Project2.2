@@ -1,13 +1,8 @@
 package puzzles.hoppers.model;
 
 import puzzles.common.solver.Configuration;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
+import java.io.*;
 
 /**
  * Representation of a configuration of the Hoppers puzzle.
@@ -23,6 +18,14 @@ public class HoppersConfig implements Configuration{
     private int rows;
     /** total number of columns in the hopper board */
     private int cols;
+    /** red frog character */
+    public static final char RED_FROG = 'R';
+    /** green frog character */
+    public static final char GREEN_FROG = 'G';
+    /** lily-pad character */
+    public static final char LILY_PAD = '.';
+    /** water character */
+    public static final char WATER = '*';
 
     /**
      * Constructs the initial configuration from an input file whose contents
@@ -60,6 +63,7 @@ public class HoppersConfig implements Configuration{
     /**
      * Copy constructor. Takes a config other, and makes a full "deep" copy
      * of its instance data.
+     *
      * @param other the config to copy
      */
     private HoppersConfig(HoppersConfig other){
@@ -73,6 +77,7 @@ public class HoppersConfig implements Configuration{
 
     /**
      * Gets the contents at a cell.
+     *
      * @param r the row
      * @param c the column
      * @return the contents
@@ -81,18 +86,21 @@ public class HoppersConfig implements Configuration{
 
     /**
      * Gets the total amount of rows on the board.
+     *
      * @return total amount of rows on the board
      */
     public int getRows() { return rows; }
 
     /**
      * Gets the total amount of columns on the board.
+     *
      * @return total amount of columns on the board
      */
     public int getCols() { return cols; }
 
     /**
-     * Sets new cell contents, moving contents to their new given place.
+     * Moves a frog from one space to another on the board
+     *
      * @param startRow start row
      * @param startCol start column
      * @param endRow end row
@@ -102,12 +110,13 @@ public class HoppersConfig implements Configuration{
         int midRow = (startRow+endRow)/2;
         int midCol = (startCol+endCol)/2;
         grid[endRow][endCol] = grid[startRow][startCol];
-        grid[midRow][midCol] = '.';
-        grid[startRow][startCol] = '.';
+        grid[midRow][midCol] = LILY_PAD;
+        grid[startRow][startCol] = LILY_PAD;
     }
 
     /**
      * Is the row and column inside the board's boundaries?
+     *
      * @param row the row
      * @param col the column
      * @return true if the position is valid, false otherwise
@@ -118,19 +127,21 @@ public class HoppersConfig implements Configuration{
 
     /**
      * Will this move jump over a green frog and land on an empty lily-pad?
+     *
      * @param move 2-D integer array that gives the cell the frog hops over
      *             and the cell that the frog lands on
      * @return true if valid, false otherwise
      */
     public boolean isValidMove(Integer[][] move){
         if(isValidCoordinate(move[0][0], move[0][1]) && isValidCoordinate(move[1][0], move[1][1])){
-            return (grid[move[0][0]][move[0][1]] == 'G') && (grid[move[1][0]][move[1][1]] == '.');
+            return (grid[move[0][0]][move[0][1]] == GREEN_FROG) && (grid[move[1][0]][move[1][1]] == LILY_PAD);
         }
         return false;
     }
 
     /**
      * Gives all possible moves from one cell.
+     *
      * @param r the row
      * @param c the column
      * @return list of all the possible moves from one cell
@@ -161,6 +172,7 @@ public class HoppersConfig implements Configuration{
 
     /**
      * Gets the collection of neighbors from the current cell.
+     *
      * @return valid neighbors
      */
     @Override
@@ -168,7 +180,7 @@ public class HoppersConfig implements Configuration{
         Collection<Configuration> neighborsList = new ArrayList<>();
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                if(grid[r][c] == 'R' || grid[r][c] == 'G'){
+                if(grid[r][c] == RED_FROG || grid[r][c] == GREEN_FROG){
                     ArrayList<Integer[][]> neighborCoordinates = getMoves(r, c);
                     for (Integer[][] move: neighborCoordinates) {
                         if (isValidMove(move)){
@@ -177,8 +189,8 @@ public class HoppersConfig implements Configuration{
                             int endRow = move[1][0];
                             int endCol = move[1][1];
                             HoppersConfig neighbor = new HoppersConfig(this);
-                            neighbor.grid[r][c] = '.';
-                            neighbor.grid[midRow][midCol] = '.';
+                            neighbor.grid[r][c] = LILY_PAD;
+                            neighbor.grid[midRow][midCol] = LILY_PAD;
                             neighbor.grid[endRow][endCol] = this.grid[r][c];
                             neighborsList.add(neighbor);
                         }
@@ -191,13 +203,14 @@ public class HoppersConfig implements Configuration{
 
     /**
      * Is the current configuration the solution?
+     *
      * @return true if solution, false otherwise
      */
     @Override
     public boolean isSolution() {
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                if(grid[r][c] == 'G'){
+                if(grid[r][c] == GREEN_FROG){
                     return false;
                 }
             }
@@ -207,6 +220,7 @@ public class HoppersConfig implements Configuration{
 
     /**
      * Checks if a hopper board configuration is equal to another.
+     *
      * @param other the other board config
      * @return true if boards are equal, false otherwise
      */
@@ -228,6 +242,7 @@ public class HoppersConfig implements Configuration{
 
     /**
      * Get string representation of the configuration.
+     *
      * @return the complete string
      */
     @Override

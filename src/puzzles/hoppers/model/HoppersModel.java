@@ -1,12 +1,10 @@
 package puzzles.hoppers.model;
 
-import puzzles.common.Observer;
 import puzzles.common.solver.Configuration;
 import puzzles.common.solver.Solver;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import puzzles.common.Observer;
 import java.util.*;
+import java.io.*;
 
 /**
  * The model for the hopper game
@@ -19,12 +17,18 @@ public class HoppersModel {
     private final List<Observer<HoppersModel, String>> observers = new LinkedList<>();
     /** the current configuration */
     private HoppersConfig currentConfig;
+    /** total number of rows in the hopper board */
+    private int rows;
+    /** total number of columns in the hopper board */
+    private int cols;
     /** the initial row that was selected */
     private int startRow;
     /** the initial column that was selected */
     private int startCol;
     /** helps keep track if select has been called once or twice */
     private boolean isFirstSelect = true;
+    /** the name of the previous file */
+    private String prevFile;
 
     /**
      * Constructs the hopper model from the string of a filename
@@ -34,6 +38,9 @@ public class HoppersModel {
      */
     public HoppersModel(String filename) throws IOException {
         this.currentConfig = new HoppersConfig(filename);
+        this.rows = currentConfig.getRows();
+        this.cols = currentConfig.getCols();
+        this.prevFile = filename;
     }
 
     /**
@@ -56,6 +63,26 @@ public class HoppersModel {
     }
 
     /**
+     * Gets the total amount of rows on the board.
+     * @return total amount of rows on the board
+     */
+    public int getRows() { return rows; }
+
+    /**
+     * Gets the total amount of columns on the board.
+     * @return total amount of columns on the board
+     */
+    public int getCols() { return cols; }
+
+    /**
+     * Gets the contents at a cell.
+     * @param r the row
+     * @param c the column
+     * @return the contents
+     */
+    public char getCell(int r, int c){ return currentConfig.getCell(r, c); }
+
+    /**
      * Takes provided name of a hopper puzzle file for the game to load
      *
      * @param filename the name of a file to read from
@@ -63,11 +90,14 @@ public class HoppersModel {
      */
     public void load(String filename) throws IOException {
         String[] file = filename.split("/");
-        try(FileReader check = new FileReader(filename)){
+        try(FileReader ignored = new FileReader(filename)){
             currentConfig = new HoppersConfig(filename);
-            alertObservers("Loaded: " + file[2]);
+            this.rows = currentConfig.getRows();
+            this.cols = currentConfig.getCols();
+            prevFile = filename;
+            alertObservers("Loaded: " + file[file.length-1]);
         } catch (FileNotFoundException e){
-            alertObservers("Failed to load: " + file[2]);
+            alertObservers("Failed to load: " + file[file.length-1]);
         }
     }
 
@@ -75,12 +105,10 @@ public class HoppersModel {
      * Previously loaded file is reloaded, causing the puzzle to return to
      * its initial state
      *
-     * @param filename filename of previously loaded file
      * @throws IOException if the file is not found or there are errors reading
      */
-    public void reset(String filename) throws IOException {
-        load(filename);
-        currentConfig = new HoppersConfig(filename);
+    public void reset() throws IOException {
+        load(prevFile);
         alertObservers("Puzzle reset!");
     }
 
@@ -93,7 +121,7 @@ public class HoppersModel {
     public void hint(){
         Solver solver = new Solver(currentConfig);
         ArrayList<Configuration> hints = (ArrayList<Configuration>) solver.solve();
-        if (hints != null) {
+        if (hints != null && hints.size() >= 2) {
             currentConfig = (HoppersConfig) hints.get(1);
             alertObservers("Next step!");
         } else {
@@ -111,14 +139,14 @@ public class HoppersModel {
      * valid, it should be made and the board should be updated along with an
      * appropriate indication. Other-wise an error message should be displayed
      *
-     * @param row the row
-     * @param col the column
+     * @param r the row
+     * @param c the column
      */
-    public void select(int row, int col){
+    public void select(int r, int c){
         if(isFirstSelect){
-            firstSelect(row,col);
+            firstSelect(r,c);
         } else {
-            secondSelect(row, col);
+            secondSelect(r, c);
         }
     }
 
@@ -130,13 +158,13 @@ public class HoppersModel {
      * @param c the column
      */
     public void firstSelect(int r, int c){
-        if((r >= 0 && r < currentConfig.getRows()) && (c >= 0 && c < currentConfig.getCols())){
-            if(currentConfig.getCell(r, c) == 'G' || currentConfig.getCell(r, c) == 'R'){
-                startRow = r;
-                startCol = c;
-                isFirstSelect = false;
-                alertObservers("Selected (" + r + ", " + c + ")");
-            }
+        if((r >= 0 && r < rows) && (c >= 0 && c < cols) &&
+                (currentConfig.getCell(r, c) == HoppersConfig.GREEN_FROG
+                        || currentConfig.getCell(r, c) == HoppersConfig.RED_FROG)){
+            startRow = r;
+            startCol = c;
+            isFirstSelect = false;
+            alertObservers("Selected (" + r + ", " + c + ")");
         } else {
             alertObservers("No frog at (" + r + ", " + c + ")");
         }
@@ -149,6 +177,7 @@ public class HoppersModel {
      * @param c the column
      */
     public void secondSelect(int r, int c){
+        isFirstSelect = true;
         if(validJump(startRow, startCol, r, c)){
             currentConfig.move(startRow, startCol, r, c);
             alertObservers("Jumped from (" + startRow + ", " + startCol +
@@ -157,7 +186,6 @@ public class HoppersModel {
             alertObservers("Can't jump from (" + startRow + ", " + startCol +
                     ") to " + "(" + r + ", " + c + ")");
         }
-        isFirstSelect = true;
     }
 
     /**
@@ -171,10 +199,15 @@ public class HoppersModel {
      * @return true if the jump is valid, false otherwise
      */
     public boolean validJump(int startRow, int startCol, int endRow, int endCol){
-        int midRow = (startRow+endRow)/2;
-        int midCol = (startCol+endCol)/2;
-        if((endRow>=0 && endRow<currentConfig.getRows()) && (endCol>=0 && endCol< currentConfig.getCols())){
-            return currentConfig.getCell(midRow, midCol) == 'G' && currentConfig.getCell(endRow, endCol) == '.';
+        int rowDif = Math.abs(startRow-endRow);
+        int colDif = Math.abs(startCol-endCol);
+        if((rowDif==colDif && rowDif==2) || (rowDif==4 && colDif==0) || (rowDif==0 && colDif==4)){
+            int midRow = (startRow+endRow)/2;
+            int midCol = (startCol+endCol)/2;
+            if((endRow>=0 && endRow<rows) && (endCol>=0 && endCol<cols)){
+                return currentConfig.getCell(midRow, midCol) == HoppersConfig.GREEN_FROG
+                        && currentConfig.getCell(endRow, endCol) == HoppersConfig.LILY_PAD;
+            }
         }
         return false;
     }
@@ -188,15 +221,15 @@ public class HoppersModel {
     public String toString(){
         StringBuilder gridString = new StringBuilder();
         gridString.append("   ");
-        for(int c = 0; c < currentConfig.getCols(); c++){
+        for(int c = 0; c < cols; c++){
             gridString.append(c).append(" ");
         }
         gridString.append("\n  ");
-        gridString.append("-".repeat(Math.max(0, 2 * currentConfig.getCols())));
+        gridString.append("-".repeat(Math.max(0, 2 * cols)));
         gridString.append("\n");
-        for(int r = 0; r < currentConfig.getRows(); r++){
+        for(int r = 0; r < rows; r++){
             gridString.append(r).append("| ");
-            for(int c = 0; c < currentConfig.getCols(); c++){
+            for(int c = 0; c < cols; c++){
                 gridString.append(currentConfig.getCell(r, c)).append(" ");
             }
             gridString.append("\n");

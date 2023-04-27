@@ -26,9 +26,7 @@ public class HoppersPTUI implements Observer<HoppersModel, String> {
     public void init(String filename) throws IOException {
         this.model = new HoppersModel(filename);
         this.model.addObserver(this);
-        String[] file = filename.split("/");
-        System.out.println("Loaded: " + file[2]);
-        System.out.println(model);
+        model.load(filename);
         displayHelp();
     }
 
@@ -90,7 +88,7 @@ public class HoppersPTUI implements Observer<HoppersModel, String> {
                 } else if(words[0].startsWith("q")){
                     break;
                 } else if(words[0].startsWith("r")){
-                    model.reset(ogBoard);
+                    model.reset();
                 } else {
                     displayHelp();
                 }
