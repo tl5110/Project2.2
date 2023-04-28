@@ -122,6 +122,8 @@ public class HoppersModel {
         if (hints != null && hints.size() >= 2) {
             currentConfig = (HoppersConfig) hints.get(1);
             alertObservers("Next step!");
+        } else if (currentConfig.isSolution()){
+            alertObservers("Solved!");
         } else {
             alertObservers("No Solution!");
         }
