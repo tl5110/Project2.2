@@ -85,9 +85,13 @@ public class HoppersPTUI implements Observer<HoppersModel, String> {
                         }
                     }
                 } else if(words[0].startsWith("s")){
-                    int row = Integer.parseInt(words[1]);
-                    int col = Integer.parseInt(words[2]);
-                    model.select(row, col);
+                    if(words.length < 3){
+                        update(this.model, "Incomplete Selection!");
+                    } else {
+                        int row = Integer.parseInt(words[1]);
+                        int col = Integer.parseInt(words[2]);
+                        model.select(row, col);
+                    }
                 } else if(words[0].startsWith("q")){
                     break;
                 } else if(words[0].startsWith("r")){
