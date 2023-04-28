@@ -72,13 +72,17 @@ public class HoppersPTUI implements Observer<HoppersModel, String> {
                 if (words[0].startsWith("h")) {
                     model.hint();
                 } else if(words[0].startsWith("l")){
-                    String[] filename = words[1].split("/");
-                    if(filename.length > 1){
-                        ogBoard = words[1];
-                        model.load(ogBoard);
-                    } else{
-                        ogBoard = "data/hoppers/" + words[1];
-                        model.load(ogBoard);
+                    if(words.length < 2){
+                        update(this.model, "No File Chosen!");
+                    } else {
+                        String[] filename = words[1].split("/");
+                        if(filename.length > 1){
+                            ogBoard = words[1];
+                            model.load(ogBoard);
+                        } else {
+                            ogBoard = "data/hoppers/" + words[1];
+                            model.load(ogBoard);
+                        }
                     }
                 } else if(words[0].startsWith("s")){
                     int row = Integer.parseInt(words[1]);

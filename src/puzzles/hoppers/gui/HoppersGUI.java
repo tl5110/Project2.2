@@ -148,10 +148,14 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
             currentPath += File.separator + "data" + File.separator + "hoppers";
             chooser.setInitialDirectory(new File(currentPath));
             File file = chooser.showOpenDialog(stage);
-            try {
-                model.load(file.getAbsolutePath());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if(file != null){
+                try {
+                    model.load(file.getAbsolutePath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                update(this.model, "No File Chosen!");
             }
         });
         // RESET
