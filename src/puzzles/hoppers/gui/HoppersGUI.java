@@ -61,7 +61,7 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
         String[] file = filename.split("/");
         this.model = new HoppersModel(filename);
         this.model.addObserver(this);
-        this.status.setText("Loaded: " + file[2]);
+        this.status.setText("Loaded: " + file[file.length-1]);
         status.setFont(new Font("Serif", FONT_SIZE));
     }
 
