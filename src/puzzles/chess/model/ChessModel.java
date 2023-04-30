@@ -227,5 +227,13 @@ public class ChessModel {
         return gridString.toString();
     }
 
+    public int getRows(){
+        return currentConfig.LENGTH;
+    }
+
+    public int getCols(){
+        return currentConfig.WIDTH;
+    }
+
 
 }
