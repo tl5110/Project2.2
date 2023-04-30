@@ -58,6 +58,7 @@ public class ChessPTUI implements Observer<ChessModel, String> {
             System.out.print( "> " );
             String line = in.nextLine();
             String[] words = line.split( "\\s+" );
+            // words = curr user input line, i.e. "l chess-5.txt"
             if (words.length > 0) {
                 if (words[0].startsWith("h")) {
                     model.hint();
