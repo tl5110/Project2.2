@@ -1,8 +1,12 @@
 package puzzles.chess.model;
 import puzzles.common.Coordinates;
 import puzzles.common.solver.Configuration;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import static puzzles.chess.model.ChessConfig.*;
 
 /**
  * Helper class that provides methods to retrieve
@@ -12,7 +16,42 @@ import java.util.Stack;
  * @author jolin qiu
  */
 
+
 public class ChessMoves {
+
+    /** whether the current program is a PTUI/GUI or Solver determines how coordinates will be
+     * returned */
+    private static boolean isPTUI;
+
+    /** stack of the valid moves a chess piece can make for a given configuration */
+    private static Stack<Coordinates> validMoves;
+
+
+    /**
+     * gets the valid moves
+     * @param chessPiece the current chess piece
+     * @param currentConfig the current chess board configuration
+     * @param currCoord the current coordinate to check if spot is valid
+     * @return the stack of the valid coordinates for the given piece configuration
+     */
+    public static Stack<Coordinates> getValidMoves(char chessPiece,
+                                                       ChessConfig currentConfig,
+                                                       Coordinates currCoord) {
+        validMoves = new Stack<>();
+//        return validMoves;
+        ArrayList neighbors = new ArrayList<>();
+        switch (chessPiece) {
+            // makes new [chessPiece] configuration(s) at next valid capture coordinates
+            case BISHOP -> ChessMoves.makeBishopConfigs(neighbors, currentConfig, currCoord);
+            case KING -> ChessMoves.makeKingConfigs(neighbors, currentConfig, currCoord);
+            case KNIGHT -> ChessMoves.makeKnightConfigs(neighbors, currentConfig, currCoord);
+            case PAWN -> ChessMoves.makePawnConfigs(neighbors, currentConfig, currCoord);
+            case QUEEN -> ChessMoves.makeQueenConfigs(neighbors, currentConfig, currCoord);
+            case ROOK -> ChessMoves.makeRookConfigs(neighbors, currentConfig, currCoord);
+        }
+        return validMoves;
+    }
+
     /**
      * Creates the configurations for the specified chess piece
      *
@@ -42,28 +81,37 @@ public class ChessMoves {
      */
     public static void makeBishopConfigs(List<Configuration> neighbors, ChessConfig child, Coordinates current){
         // new bishop configuration(s) at the next valid capture coordinate
-        Stack<Coordinates> validMoves = ChessMoves.getValidDiagonals(child, current);
-        getConfigurations(neighbors, child, validMoves, ChessConfig.BISHOP, current);
+//        Stack<Coordinates> validMoves = ChessMoves.getValidDiagonals(child, current);
+        validMoves = ChessMoves.getValidDiagonals(child, current);
+        if (!isPTUI){
+            getConfigurations(neighbors, child, validMoves, BISHOP, current);
+        }
     }
 
     /** retrieves the coordinates for use in making neighbors for a ROOK configuration */
     public static void makeRookConfigs(List<Configuration> neighbors, ChessConfig child, Coordinates current) {
-        Stack<Coordinates> validMoves = ChessMoves.getValidHorizontals(child, current);
+//        Stack<Coordinates> validMoves = ChessMoves.getValidHorizontals(child, current);
+        validMoves = ChessMoves.getValidHorizontals(child, current);
         validMoves.addAll(ChessMoves.getValidVerticals(child, current));
-        getConfigurations(neighbors, child, validMoves, ChessConfig.ROOK, current);
+        if (!isPTUI){
+            getConfigurations(neighbors, child, validMoves, ChessConfig.ROOK, current);
+        }
     }
 
     /** retrieves the coordinates for use in making neighbors for a QUEEN configuration */
     public static void makeQueenConfigs(List<Configuration> neighbors, ChessConfig child, Coordinates current) {
-        Stack<Coordinates> validMoves = ChessMoves.getValidHorizontals(child, current);
+//        Stack<Coordinates> validMoves = ChessMoves.getValidHorizontals(child, current);
+        validMoves = ChessMoves.getValidHorizontals(child, current);
         validMoves.addAll(ChessMoves.getValidVerticals(child, current));
         validMoves.addAll(ChessMoves.getValidDiagonals(child, current));
-        getConfigurations(neighbors, child, validMoves, ChessConfig.QUEEN, current);
+        if (!isPTUI){
+            getConfigurations(neighbors, child, validMoves, ChessConfig.QUEEN, current);
+        }
     }
 
     /** retrieves the coordinates for use in making neighbors for a PAWN configuration */
     public static void makePawnConfigs(List<Configuration> neighbors, ChessConfig child, Coordinates current) {
-        Stack <Coordinates> validMoves = new Stack<>();
+        validMoves = new Stack<>();
         // fwd spots will always be pawn's current row -1
         int row = current.row();
         int col = current.col();
@@ -79,12 +127,15 @@ public class ChessMoves {
                 validMoves.push(new Coordinates(row-1, col+1));
             }
         }
-        getConfigurations(neighbors, child, validMoves, ChessConfig.PAWN, current);
+        if (!isPTUI){
+            getConfigurations(neighbors, child, validMoves, ChessConfig.PAWN, current);
+
+        }
     }
 
     /** retrieves the coordinates for use in making neighbors for a KNIGHT configuration */
     public static void makeKnightConfigs(List<Configuration> neighbors, ChessConfig child, Coordinates current) {
-        Stack <Coordinates> validMoves = new Stack<>();
+        validMoves = new Stack<>();
 
         int row = current.row();
         int col = current.col();
@@ -129,13 +180,15 @@ public class ChessMoves {
                 validMoves.push(new Coordinates(row-2, col-1));
             }
         }
-        getConfigurations(neighbors, child, validMoves, ChessConfig.KNIGHT, current);
+        if (!isPTUI){
+            getConfigurations(neighbors, child, validMoves, KNIGHT, current);
+        }
     }
 
 
     /** retrieves the coordinates for use in making neighbors for a KING configuration */
     public static void makeKingConfigs(List<Configuration> neighbors, ChessConfig child, Coordinates current) {
-        Stack<Coordinates> validMoves = new Stack<>();
+        validMoves = new Stack<>();
         int i = current.row();
         int j = current.col();
 
@@ -181,7 +234,9 @@ public class ChessMoves {
             }
         }
         // returning the neighbors
-        getConfigurations(neighbors, child, validMoves, ChessConfig.KING, current);
+        if (!isPTUI){
+            getConfigurations(neighbors, child, validMoves, KING, current);
+        }
     }
 
     /**
@@ -293,5 +348,13 @@ public class ChessMoves {
             }
         }
         return validVerticals;
+    }
+
+    /**
+     * is the program running a PTUI?
+     * @param PTUI boolean
+     */
+    public static void setPTUI(boolean PTUI) {
+        isPTUI = PTUI;
     }
 }

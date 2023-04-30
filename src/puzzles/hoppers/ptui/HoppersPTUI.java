@@ -12,6 +12,7 @@ import java.util.Scanner;
 public class HoppersPTUI implements Observer<HoppersModel, String> {
     /** View/Controller access to model */
     private HoppersModel model;
+
     /** the initial state of the given hopper's board */
     private static String ogBoard;
 

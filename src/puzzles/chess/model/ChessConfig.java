@@ -222,6 +222,14 @@ public class ChessConfig implements Configuration {
     }
 
     /**
+     * transfer cell contents for use in the PTUI / GUI
+     */
+    public static void moveTo(int startRow, int startCol, int endRow, int endCol, ChessConfig child){
+        child.chessBoard[endRow][endCol] = child.chessBoard[startRow][startCol];
+        child.chessBoard[startRow][startCol] = '.';
+    }
+
+    /**
      * if the cell is a capture target, it has any piece. Otherwise, the cell is empty
      * @param cell  the space on the chessBoard
      * @return      true if the cell is not empty

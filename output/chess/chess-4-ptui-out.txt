@@ -16,7 +16,7 @@ r(eset)             -- reset the current game
   --------
 0| B . P K
 1| N . . P
-2| . . P Q
+2| . . P Q3
 3| R . . P
 
 > Captured from (0, 0)  to (2, 2)

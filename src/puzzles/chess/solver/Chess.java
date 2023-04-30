@@ -54,6 +54,8 @@ public class Chess {
                         System.out.println("Step " + step + ": " + board);
                         step += 1;
                     }
+                }  else {
+                    System.out.println("No solution!");
                 }
             } catch (IOException ioe){
                 System.out.println(ioe.getMessage());
