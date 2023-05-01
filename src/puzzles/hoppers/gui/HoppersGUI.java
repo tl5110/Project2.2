@@ -31,9 +31,9 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
     /** the status area, or interaction messages from the model */
     private final Label status = new Label();
     /** the size of all icons, in square dimension */
-    private final static int ICON_SIZE = 75;
+    private final static int ICON_SIZE = 50;
     /** the font size for labels and buttons */
-    private final static int FONT_SIZE = 25;
+    private final static int FONT_SIZE = 12;
     /** the resources directory is located directly underneath the gui package */
     private final static String RESOURCES_DIR = "resources/";
     /** red frog */
@@ -109,22 +109,23 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
                 int locR = r;
                 int locC = c;
                 Button pieces = new Button();
+                pieces.setOnAction(event -> model.select(locR, locC));
                 pieces.setMinSize(ICON_SIZE, ICON_SIZE);
                 pieces.setMaxSize(ICON_SIZE, ICON_SIZE);
+                ImageView image = null;
                 if(model.getCell(r, c) == HoppersConfig.LILY_PAD) {
-                    pieces.setGraphic(new ImageView(lilyPad));
-                    pieces.setOnAction(event -> model.select(locR, locC));
+                    image = new ImageView(lilyPad);
                 } else if(model.getCell(r, c) == HoppersConfig.WATER){
-                    pieces.setGraphic(new ImageView(water));
-                    pieces.setOnAction(event -> model.select(locR, locC));
+                    image = new ImageView(water);
                 } else if(model.getCell(r, c) == HoppersConfig.GREEN_FROG){
-                    pieces.setGraphic(new ImageView(greenFrog));
-                    pieces.setOnAction(event -> model.select(locR, locC));
-
+                    image = new ImageView(greenFrog);
                 } else if(model.getCell(r, c) == HoppersConfig.RED_FROG) {
-                    pieces.setGraphic(new ImageView(redFrog));
-                    pieces.setOnAction(event -> model.select(locR, locC));
+                    image = new ImageView(redFrog);
                 }
+                assert image != null;
+                image.setFitHeight(ICON_SIZE);
+                image.setFitWidth(ICON_SIZE);
+                pieces.setGraphic(image);
                 piecesGrid[r][c] = pieces;
                 board.add(pieces, c, r);
             }
@@ -195,15 +196,20 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
         this.stage.sizeToScene();
         for(int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
+                ImageView image=null;
                 if(model.getCell(r, c) == HoppersConfig.LILY_PAD) {
-                    piecesGrid[r][c].setGraphic(new ImageView(lilyPad));
+                    image = new ImageView(lilyPad);
                 } else if(model.getCell(r, c) == HoppersConfig.WATER){
-                    piecesGrid[r][c].setGraphic(new ImageView(water));
+                    image = new ImageView(water);
                 } else if(model.getCell(r, c) == HoppersConfig.GREEN_FROG){
-                    piecesGrid[r][c].setGraphic(new ImageView(greenFrog));
+                    image = new ImageView(greenFrog);
                 } else if(model.getCell(r, c) == HoppersConfig.RED_FROG) {
-                    piecesGrid[r][c].setGraphic(new ImageView(redFrog));
+                    image = new ImageView(redFrog);
                 }
+                assert image != null;
+                image.setFitHeight(ICON_SIZE);
+                image.setFitWidth(ICON_SIZE);
+                piecesGrid[r][c].setGraphic(image);
             }
         }
     }
