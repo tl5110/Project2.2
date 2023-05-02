@@ -63,6 +63,8 @@ public class ChessGUI extends Application implements Observer<ChessModel, String
     /** the primary stage for the application */
     private Stage stage;
 
+    /** The in-game messages that notifies the user of valid/invalid captures,
+     * loaded files, etc.*/
     private final Label message = new Label();
 
     /** The full chess game with headers and labels */
