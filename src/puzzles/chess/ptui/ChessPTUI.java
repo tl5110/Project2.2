@@ -110,7 +110,7 @@ public class ChessPTUI implements Observer<ChessModel, String> {
                 ChessPTUI ptui = new ChessPTUI();
                 // The model asks the configuration to load it
                 initialBoard = args[0];
-                ptui.init(args[0]);
+                ptui.init(initialBoard);
                 ptui.run();
             } catch (IOException ioe) {
                 System.out.println(ioe.getMessage());

@@ -137,7 +137,7 @@ public class ChessModel {
      */
     public void firstSelection(int row, int col){
         currCoordinates = new Coordinates(row, col);
-        chessPiece = ChessConfig.getCell(row, col, currentConfig);
+        chessPiece = getCell(row, col);
         if (ChessConfig.isCaptureTarget(chessPiece)) {
             // if there is a piece there, there should be an indication + selection
             // should advance to the second part
@@ -220,19 +220,35 @@ public class ChessModel {
         for(int r = 0; r < currentConfig.LENGTH; r++){
             gridString.append(r).append("| ");
             for(int c = 0; c < currentConfig.LENGTH; c++){
-                gridString.append(ChessConfig.getCell(r, c, currentConfig)).append(" ");
+                gridString.append(getCell(r, c)).append(" ");
             }
             gridString.append("\n");
         }
         return gridString.toString();
     }
 
+    /**
+     * @return the number of rows / length of the current configuration
+     */
     public int getRows(){
         return currentConfig.LENGTH;
     }
 
+    /**
+     * @return the number of columns / width of the current configuration
+     */
     public int getCols(){
         return currentConfig.WIDTH;
+    }
+
+    /**
+     * Gets the contents at a cell.
+     * @param row the row
+     * @param col the column
+     * @return the contents
+     */
+    public char getCell(int row, int col) {
+        return ChessConfig.getCell(row, col, currentConfig);
     }
 
 
